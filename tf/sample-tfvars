@@ -1,0 +1,4 @@
+host = "<host_ip>"
+temp_password = "laptop01"
+
+scripts = ["vars", "run", "base", "certificates", "secure", "nat", "firewall" ]
