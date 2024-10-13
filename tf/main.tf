@@ -7,6 +7,8 @@ resource "routeros_system_script" "scripts" {
 
 locals {
   runScript = "/system/script/run [find where name=\"run\"]"
+  deleteRunScript = "/system/script/remove [find where name=\"run\"]"
+  deleteSetupScript = "if ([:len [find where name=\"setup\"]] > 0) do={ /system/script/remove [find where name=\"setup\"]}"
 }
 
 resource "null_resource" "run" {
@@ -14,6 +16,14 @@ resource "null_resource" "run" {
 
   provisioner "local-exec" {
     command = "ssh ${var.adminuser}@${var.host} \"${local.runScript}\"" 
+  }
+
+  provisioner "local-exec" {
+    command = "ssh ${var.adminuser}@${var.host} \"${local.deleteRunScript}\"" 
+  }
+
+  provisioner "local-exec" {
+    command = "ssh ${var.adminuser}@${var.host} \"${local.deleteSetupScript}\"" 
   }
 
   provisioner "local-exec" {
