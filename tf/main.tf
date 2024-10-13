@@ -5,48 +5,10 @@ resource "routeros_system_script" "scripts" {
   source = file("../scripts/${var.scripts[count.index]}.rsc")
 }
 
-locals {
-  runScript = "/system/script/run [find where name=\"run\"]"
-  deleteRunScript = "/system/script/remove [find where name=\"run\"]"
-  deleteSetupScript = "if ([:len [find where name=\"setup\"]] > 0) do={ /system/script/remove [find where name=\"setup\"]}"
-}
-
 resource "null_resource" "run" {
   depends_on = [ routeros_system_script.scripts ]
 
   provisioner "local-exec" {
-    command = "ssh ${var.adminuser}@${var.host} \"${local.runScript}\"" 
-  }
-
-  provisioner "local-exec" {
-    command = "ssh ${var.adminuser}@${var.host} \"${local.deleteRunScript}\"" 
-  }
-
-  provisioner "local-exec" {
-    command = "ssh ${var.adminuser}@${var.host} \"${local.deleteSetupScript}\"" 
-  }
-
-  provisioner "local-exec" {
-    command = "mkdir ../certs"
-  }
-  
-  provisioner "local-exec" {
-    command = "scp -P 2222 kundun@${var.host}:/cert_export_MikroTik.crt ../certs/ca.crt" 
-  }
-
-  provisioner "local-exec" {
-    command = "scp -P 2222 kundun@${var.host}:/cert_export_chat-server@MikroTik.crt ../certs/server.crt" 
-  }
-
-  provisioner "local-exec" {
-    command = "scp -P 2222 kundun@${var.host}:/cert_export_chat-server@MikroTik.key ../certs/server.key" 
-  }
-
-  provisioner "local-exec" {
-    command = "scp -P 2222 kundun@${var.host}:/server-pass.txt ../certs/" 
-  }
-
-  provisioner "local-exec" {
-    command = "scp -P 2222 kundun@${var.host}:/passphrase.txt ../certs/" 
+    command = "source ./finalize.sh"
   }
 }
