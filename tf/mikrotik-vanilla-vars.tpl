@@ -1,0 +1,1 @@
+chr_vanilla_snapshot_id = <snapshot_id>
