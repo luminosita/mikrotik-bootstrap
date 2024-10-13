@@ -1,28 +1,42 @@
-module "cloudinit" {
-  source  = "../../terraform-hetzner-cloudinit" #"luminosita/cloudinit/hetzner"
-  #version = "0.0.2"
+resource "routeros_system_script" "scripts" {
+  count = length(var.scripts)
 
-  providers = {
-    hcloud = hcloud
+  name   = var.scripts[count.index]
+  source = file("${path.module}/scripts/${var.scripts[count.index]}.rsc")
+}
+
+locals {
+  runScript = "/system/script/run [find where name=\"run\"]"
+}
+
+resource "null_resource" "run" {
+  depends_on = [ routeros_system_script.scripts ]
+
+  provisioner "local-exec" {
+    command = "ssh admin@${var.host} \"${local.runScript}\"" 
   }
 
-  hcloud = {
-    ssh_public_key_file = "~/.ssh/id_rsa.pub"
+  provisioner "local-exec" {
+    command = "mkdir certs"
+  }
+  
+  provisioner "local-exec" {
+    command = "scp -P 2222 kundun@${var.host}:/cert_export_MikroTik.crt ../certs/ca.crt" 
   }
 
-  os = { 
-    #vm_base_image = "ubuntu-22.04"
-    vm_snapshot_id         = var.chr_vanilla_snapshot_id
+  provisioner "local-exec" {
+    command = "scp -P 2222 kundun@${var.host}:/cert_export_chat-server@MikroTik.crt ../certs/server.crt" 
   }
 
-  images = { 
-    "mikrotik-chr" = {
-      vm_name             = "mikrotik-chr"
+  provisioner "local-exec" {
+    command = "scp -P 2222 kundun@${var.host}:/cert_export_chat-server@MikroTik.key ../certs/server.key" 
+  }
 
-      vm_location         = "fsn1-dc14"
-      vm_server_type      = "cx22"
+  provisioner "local-exec" {
+    command = "scp -P 2222 kundun@${var.host}:/server-pass.txt ../certs/" 
+  }
 
-      vm_cloud_init       = false
-    }
+  provisioner "local-exec" {
+    command = "scp -P 2222 kundun@${var.host}:/passphrase.txt ../certs/" 
   }
 }

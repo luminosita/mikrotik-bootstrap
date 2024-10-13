@@ -2,7 +2,7 @@ include common.mk
 
 #TERRAFORM
 
-vm:
+bootstrap:
 	$(info TERRAFORM: Creating VM)
 	cd tf && \
 		terraform init && \
@@ -14,8 +14,3 @@ destroy:
 	cd tf && \
 		terraform plan -destroy -out=destroy.tfplan && \
 		terraform apply destroy.tfplan
-
-test:
-	$(info TERRAFORM: Creating VM)
-	cd tf && \
-		terraform plan

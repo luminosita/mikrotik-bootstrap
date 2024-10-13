@@ -1,12 +1,16 @@
 terraform {
   required_providers {
-    hcloud = {
-      source = "hetznercloud/hcloud"
-      version = "1.48.1"
+    routeros = {
+      source = "terraform-routeros/routeros"
+      version = "1.66.0"
     }
   }
 }
 
-provider "hcloud" {
-  token = var.hcloud_token_secret
+provider "routeros" {
+  hosturl        = "http://${var.host}"        
+  username       = var.adminuser
+  password       = var.adminpass
+  insecure       = true                        
 }
+

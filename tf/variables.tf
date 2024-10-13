@@ -1,7 +1,15 @@
-variable "hcloud_token_secret" {
+variable "host" {
   type = string
 }
 
-variable "chr_vanilla_snapshot_id" {
-  type = number
+variable "adminuser" {
+  type = string
+}
+
+variable "adminpass" {
+  type = string
+}
+
+variable "scripts" {
+  type = list(string)
 }
