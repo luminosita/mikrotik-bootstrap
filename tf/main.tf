@@ -2,7 +2,7 @@ resource "routeros_system_script" "scripts" {
   count = length(var.scripts)
 
   name   = var.scripts[count.index]
-  source = file("${path.module}/scripts/${var.scripts[count.index]}.rsc")
+  source = file("../scripts/${var.scripts[count.index]}.rsc")
 }
 
 locals {
@@ -13,11 +13,11 @@ resource "null_resource" "run" {
   depends_on = [ routeros_system_script.scripts ]
 
   provisioner "local-exec" {
-    command = "ssh admin@${var.host} \"${local.runScript}\"" 
+    command = "ssh ${var.adminuser}@${var.host} \"${local.runScript}\"" 
   }
 
   provisioner "local-exec" {
-    command = "mkdir certs"
+    command = "mkdir ../certs"
   }
   
   provisioner "local-exec" {
