@@ -15,6 +15,7 @@ set www disabled=yes
 set www-ssl disabled=yes
 set ssh port=$SSHPORT
 
+#FIXME Enable adminuser (bug is to use it in snapshot, multiple instance with the same password)
 # Done during snapshot creation
 # /user
 # add name=$ADMINUSER password=$ADMINPASS group=full
