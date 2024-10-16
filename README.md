@@ -2,29 +2,26 @@
 
 ### Create Mikrotik CHR VM
 
-Clone `mikrotik-<provider>` repository
-
 ```bash
-$ make vm
-...
-ip_addresses = {
-  "vm_ips" = {
-    "mikrotik-chr" = "91.107.206.126"
-  }
-}
+SNAPSHOT_ID=<mikrotik_final_image_id>
 ```
 
-Approve license and change password to temporary passsword
+```bash
+$ hcloud server create --image "$SNAPSHOT_ID" --location "fsn1" --type "cx22" --name "mikrotik"
+```
+
+Optionally replace mikrotik public key
 
 ```bash
-$ ssh admin@<vm ip address>
+$ rm ~/.ssh/mikrotik*
+$ ssh-keygen -t rsa -b 2048 -f ~/.ssh/mikrotik_rsa -P ""
 ```
 
 # Bootstrap Mikrotik
 
 ```bash
+$ export TF_VAR_adminPass=`openssl rand -hex 16`
 $ make bootstrap
-admin@91.107.206.126's password: <temporary password>
 ```
 
 # Test Mikrotik Connection
@@ -32,7 +29,7 @@ admin@91.107.206.126's password: <temporary password>
 Login via SSH with public key
 
 ```bash
-$ ssh <admin_user>@<vm ip address> -p <ssh_port>
+$ ssh -i ~/.ssh/mikrotik_rsa <admin_user>@<vm ip address> -p <ssh_port>
 ```
 
 Copy `certs` folder to `XMPP` vm folder

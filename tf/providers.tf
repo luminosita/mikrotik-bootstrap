@@ -9,8 +9,8 @@ terraform {
 
 provider "routeros" {
   hosturl        = "http://${var.host}"        
-  username       = var.adminuser
-  password       = var.adminpass
+  username       = var.defaultAdmin
+  password       = var.tempPass
   insecure       = true                        
 }
 

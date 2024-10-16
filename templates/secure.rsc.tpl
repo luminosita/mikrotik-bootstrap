@@ -1,8 +1,7 @@
 :global SSHPORT
 
-# Done during snapshot creation
-# :global ADMINUSER
-# :global ADMINPASS
+:local ADMINUSER "${adminUser}"
+:local ADMINPASS "${adminPass}"
 
 #Disable services 
 /ip service
@@ -15,14 +14,16 @@ set www disabled=yes
 set www-ssl disabled=yes
 set ssh port=$SSHPORT
 
-#FIXME Enable adminuser (bug is to use it in snapshot, multiple instance with the same password)
-# Done during snapshot creation
-# /user
-# add name=$ADMINUSER password=$ADMINPASS group=full
-# remove admin
+/log info message="Creating new admin user ..."
 
-# /user/ssh-keys
-# import public-key-file=ssh_key.pub user=$ADMINUSER
+/user
+add name=$ADMINUSER password=$ADMINPASS group=full
+remove admin
+
+/log info message="Adding SSH public key for new admin user ..."
+
+/user/ssh-keys
+import public-key-file=mikrotik_rsa.pub user=$ADMINUSER
 
 /tool 
 mac-server set allowed-interface-list=none

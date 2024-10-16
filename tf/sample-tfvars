@@ -1,1 +1,6 @@
-scripts = ["vars", "run", "base", "certificates", "secure", "nat", "firewall" ]
+host            = <vm ip>
+tempPass        = <temp pass>
+
+adminUser       = "kundun"
+
+scripts = ["vars", "run", "base", "certificates", "nat", "firewall" ]

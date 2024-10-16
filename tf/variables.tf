@@ -2,11 +2,20 @@ variable "host" {
   type = string
 }
 
-variable "adminuser" {
+variable "defaultAdmin" {
+  type = string
+  default = "admin"
+}
+
+variable "tempPass" {
   type = string
 }
 
-variable "adminpass" {
+variable "adminUser" {
+  type = string
+}
+
+variable "adminPass" {
   type = string
 }
 
