@@ -2,12 +2,15 @@ include common.mk
 
 #TERRAFORM
 
-bootstrap:
+vm:
 	$(info TERRAFORM: Creating VM)
+	
 	cd tf && \
 		terraform init && \
 		terraform plan -out vm.tfplan && \
 		terraform apply vm.tfplan
+
+	$(info "Random admin password: $$TF_VAR_adminPass")
 
 destroy:
 	$(info TERRAFORM: Destroying VM)

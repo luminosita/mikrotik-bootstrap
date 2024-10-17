@@ -1,18 +1,17 @@
-variable "hcloud_token_secret" {
+variable "adminUser" {
+  type = string
+  default = "kundun"
+}
+
+variable "adminPass" {
   type = string
 }
 
-variable "location" {
+variable "public_key" {
   type = string
-  default = "fsn1-dc14"
 }
 
-variable "type" {
-  type = string
-  default = "cx22"
-}
-
-variable "snapshot_id" {
+variable "host" {
   type = string
 }
 
@@ -26,6 +25,3 @@ variable "tempPass" {
   default = "laptop01"
 }
 
-# variable "bootstrap" {
-#   type = bool
-# }

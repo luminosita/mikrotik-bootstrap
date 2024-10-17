@@ -1,6 +1,0 @@
-host            = <vm ip>
-tempPass        = <temp pass>
-
-adminUser       = "kundun"
-
-scripts = ["vars", "run", "base", "certificates", "nat", "firewall" ]

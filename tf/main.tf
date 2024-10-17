@@ -1,58 +1,42 @@
-resource "routeros_system_script" "scripts" {
-  count = length(var.scripts)
-
-  name   = var.scripts[count.index]
-  source = file("../scripts/${var.scripts[count.index]}.rsc")
-}
-
 locals {
-  scriptRun = "/system/script/run [find where name=\"run\"]" 
-  scriptSecure = "/system/script/run [find where name=\"secure\"];/system/script/remove [find where name=\"run\"];/system/script/remove [find where name=\"secure\"]" 
+  scriptWait = "/system/script/run [find where name=\"wait\"]ssh ;/system/script/remove [find where name=\"wait\"]" 
 }
 
-resource "null_resource" "run" {
-  depends_on = [ routeros_system_script.scripts ]
+resource "hcloud_server" "mikrotik" {
+  name        = "mikrotik-xmpp"
+  image       = var.snapshot_id
+  datacenter  = var.location
+  server_type = var.type
+  
+  public_net {
+    ipv4_enabled = true
+    ipv6_enabled = false
+  }
 
   provisioner "local-exec" {
-    command = "sshpass -p ${var.tempPass} ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ${var.defaultAdmin}@${var.host} \"${local.scriptRun}\""
+    command = "sshpass -p ${var.tempPass} ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ${var.defaultAdmin}@${hcloud_server.mikrotik.ipv4_address} \"${local.scriptWait}\""
   }
 }
 
-data "routeros_files" "certs" {
-  depends_on = [ null_resource.run ]
+resource "random_password" "password" {
+  length           = 16
+  special          = true
+  override_special = "!#$%&*()-_=+[]{}<>:?"
 }
 
-# resource "local_file" "certs" {
-#   depends_on = [ data.routeros_files.certs ]
-
-#   count = length(data.routeros_files.certs.files)
-
-#   filename = "../output/${data.routeros_files.certs.files[count.index].name}"
-#   content = data.routeros_files.certs.files[count.index].contents
-# }
-
-resource "routeros_file" "pubkey" {
-  depends_on = [ data.routeros_files.certs ]
-
-  name = "mikrotik_rsa.pub"
-  contents = file("~/.ssh/mikrotik_rsa.pub")
+resource "tls_private_key" "ssh_key" {
+  algorithm = "RSA"             # Specify the key algorithm (RSA, ECDSA, etc.)
+  rsa_bits  = 2048              # Specify the key size (bits) for RSA keys
 }
 
-resource "routeros_system_script" "secure" {
-  depends_on = [ routeros_file.pubkey ]
+module "routeros" {
+  depends_on = [ hcloud_server.mikrotik ]
 
-  name   = "secure"
-  source = templatefile("../templates/secure.rsc.tpl", {
-    adminUser = var.adminUser
-    adminPass = var.adminPass
-  })
-}
+  source = "./routeros"
 
-resource "null_resource" "secure" {
-  depends_on = [ routeros_system_script.secure ]
+  host = hcloud_server.mikrotik.ipv4_address
+  public_key = tls_private_key.ssh_key.public_key_openssh
 
-  provisioner "local-exec" {
-    command = "sshpass -p ${var.tempPass} ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ${var.defaultAdmin}@${var.host} \"${local.scriptSecure}\""
-  }
+  adminPass = random_password.password.result
 }
 
