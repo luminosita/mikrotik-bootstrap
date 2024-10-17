@@ -3,7 +3,8 @@
 ### Create Mikrotik CHR VM
 
 ```bash
-$ export TF_VAR_snapshot_id=<mikrotik_final_image_id>
+$ export TF_VAR_tempPass=<snapshot temp password>
+$ export TF_VAR_snapshot_id=<mikrotik final image id>
 $ make vm
 
 # Test Mikrotik Connection
