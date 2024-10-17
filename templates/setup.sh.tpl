@@ -49,7 +49,7 @@ openssl x509 -req -in server.csr -CA cacert.pem -CAkey cakey.pem -CAcreateserial
 
 cat server_key.pem server.pem > fullchain.pem
 
-#mv /tmp/conf/ejabberd.yml /opt/ejabberd/conf/ejabberd.yml
+mv /tmp/conf/ejabberd.yml /opt/ejabberd/conf/ejabberd.yml
 
 systemctl restart ejabberd
 

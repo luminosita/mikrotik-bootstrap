@@ -1,11 +1,24 @@
-output "ip" {
-    value = hcloud_server.mikrotik.ipv4_address
+output "mikrotik" {
+    sensitive = true 
+    value = {
+        ip = hcloud_server.mikrotik.ipv4_address
+        adminPass = random_password.mikrotik-password.result
+    }
 }
 
-output "adminPass" {
+output "xmpp" {
     sensitive = true
-    value = random_password.password.result
+    value = {
+        result = module.cloudinit.result
+        adminPass = random_password.xmpp-password.result
+    }
 }
+
+# resource "local_file" "cloud-init" {
+#     for_each = module.cloudinit.result 
+#     filename = "../output/cloud-init-${each.key}.conf"
+#     content = each.value.cloud-init
+# }
 
 resource "local_file" "private_key" {
     filename = "../output/mikrotik_rsa"
