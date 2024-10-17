@@ -7,15 +7,6 @@ locals {
 data "routeros_files" "certs" {
 }
 
-resource "local_file" "certs" {
-  depends_on = [ data.routeros_files.certs ]
-
-  count = 10
-
-  filename = count.index < local.fileCount ? "../output/${data.routeros_files.certs.files[count.index].name}" : "../output/.${count.index}"
-  content = count.index < local.fileCount ? data.routeros_files.certs.files[count.index].contents : ""
-}
-
 resource "routeros_file" "pubkey" {
   depends_on = [ data.routeros_files.certs ]
 
