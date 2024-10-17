@@ -23,9 +23,4 @@ variable "defaultAdmin" {
 
 variable "tempPass" {
   type = string
-  default = "laptop01"
 }
-
-# variable "bootstrap" {
-#   type = bool
-# }

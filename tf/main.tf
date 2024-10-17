@@ -1,5 +1,5 @@
 locals {
-  scriptWait = "/system/script/run [find where name=\"wait\"]ssh ;/system/script/remove [find where name=\"wait\"]" 
+  scriptWait = "/system/script/run [find where name=\"wait\"];/system/script/remove [find where name=\"wait\"]" 
 }
 
 resource "hcloud_server" "mikrotik" {
@@ -14,7 +14,7 @@ resource "hcloud_server" "mikrotik" {
   }
 
   provisioner "local-exec" {
-    command = "sshpass -p ${var.tempPass} ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ${var.defaultAdmin}@${hcloud_server.mikrotik.ipv4_address} \"${local.scriptWait}\""
+    command = "sshpass -p ${var.tempPass} ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ${var.defaultAdmin}@${self.ipv4_address} \"${local.scriptWait}\""
   }
 }
 
@@ -38,5 +38,8 @@ module "routeros" {
   public_key = tls_private_key.ssh_key.public_key_openssh
 
   adminPass = random_password.password.result
+  
+  defaultAdmin = var.defaultAdmin
+  tempPass = var.tempPass
 }
 

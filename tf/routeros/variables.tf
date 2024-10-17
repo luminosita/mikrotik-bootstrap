@@ -22,6 +22,5 @@ variable "defaultAdmin" {
 
 variable "tempPass" {
   type = string
-  default = "laptop01"
 }
 

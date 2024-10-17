@@ -30,7 +30,5 @@ set ssh port=$SSHPORT disabled=no
 /ip firewall filter
 set [find where dst-port=22] dst-port=$SSHPORT
 
-/ip/ssh 
-
 
 

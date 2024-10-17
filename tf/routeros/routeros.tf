@@ -1,4 +1,5 @@
 locals {
+  scriptRun = "/system/script/remove [find where name=\"run\"]" 
   scriptSecure = "/system/script/run [find where name=\"final\"];/system/script/remove [find where name=\"final\"]" 
 
   fileCount = length(data.routeros_files.certs.files)
@@ -35,6 +36,11 @@ resource "routeros_system_script" "secure" {
 
 resource "null_resource" "secure" {
   depends_on = [ routeros_system_script.secure ]
+
+  #Cleanup
+  provisioner "local-exec" {
+    command = "sshpass -p ${var.tempPass} ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ${var.defaultAdmin}@${var.host} \"${local.scriptRun}\""
+  }
 
   provisioner "local-exec" {
     command = "sshpass -p ${var.tempPass} ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ${var.defaultAdmin}@${var.host} \"${local.scriptSecure}\""
