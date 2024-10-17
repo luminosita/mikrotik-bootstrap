@@ -1,6 +1,10 @@
-output "private_key" {
+output "ip" {
+    value = hcloud_server.mikrotik.ipv4_address
+}
+
+output "adminPass" {
     sensitive = true
-    value = tls_private_key.ssh_key
+    value = random_password.password.result
 }
 
 resource "local_file" "private_key" {
